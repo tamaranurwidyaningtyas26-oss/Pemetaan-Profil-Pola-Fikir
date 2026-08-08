@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemetaan Profil Pola Pikir</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js untuk Grafik Radar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-short': 'bounce 0.8s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Custom Color Gradients & Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-text-1 {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 50%, #FFD93D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-2 {
+            background: linear-gradient(135deg, #4E65FF 0%, #92EFFD 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .option-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 font-sans bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('welcome')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                    <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-brain text-lg text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white flex items-center gap-2">
+                        Pemetaan Profil Pola Pikir
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Platform Assessment Mindset Terpadu</p>
+                </div>
+            </div>
+
+            <!-- Timer & Actions -->
+            <div class="flex items-center gap-3">
+                <!-- Countdown Timer (Visible during quiz) -->
+                <div id="timerContainer" class="hidden items-center gap-2 bg-slate-800/80 px-4 py-1.5 rounded-full border border-indigo-500/30 shadow-inner">
+                    <i class="fa-solid fa-stopwatch text-amber-400 text-sm animate-pulse"></i>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sisa Waktu:</span>
+                    <span id="timerDisplay" class="font-mono font-bold text-lg text-amber-300">20:00</span>
+                </div>
+
+                <!-- Nav Buttons -->
+                <button onclick="switchTab('spreadsheet')" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30 text-xs font-semibold transition-all">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span class="hidden sm:inline">Rekap Spreadsheet</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-center">
+
+        <!-- VIEW 1: WELCOME & BIODATA FORM -->
+        <section id="viewWelcome" class="max-w-2xl mx-auto w-full transition-all duration-300">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+                <!-- Background decorative glow -->
+                <div class="absolute -top-24 -right-24 w-60 h-60 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="text-center mb-8 relative z-10">
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 mb-3">
+                        <i class="fa-solid fa-sparkles text-amber-400 mr-1"></i> Assessment Digital 2026
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
+                        <span class="gradient-text-1">Pemetaan Profil Pola Pikir</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">
+                        Kenali kecenderungan mindset Anda dalam 5 dimensi utama: 
+                        <span class="text-pink-400 font-medium">Growth</span>, 
+                        <span class="text-cyan-400 font-medium">Adaptif</span>, 
+                        <span class="text-amber-400 font-medium">Analitis</span>, 
+                        <span class="text-emerald-400 font-medium">Kreatif</span>, dan 
+                        <span class="text-purple-400 font-medium">Kolaboratif</span>.
+                    </p>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <div class="bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50 text-center">
+                        <i class="fa-solid fa-clock text-amber-400 text-lg mb-1"></i>
+                        <p class="text-xs font-bold text-slate-200">20 Menit</p>
+                        <p class="text-[10px] text-slate-400">Batas Waktu</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50 text-center">
+                        <i class="fa-solid fa-list-check text-cyan-400 text-lg mb-1"></i>
+                        <p class="text-xs font-bold text-slate-200">20 Soal</p>
+                        <p class="text-[10px] text-slate-400">Pernyataan Reflektif</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50 text-center">
+                        <i class="fa-solid fa-chart-pie text-pink-400 text-lg mb-1"></i>
+                        <p class="text-xs font-bold text-slate-200">Grafik Radar</p>
+                        <p class="text-[10px] text-slate-400">Analisis Otomatis</p>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <form id="startForm" onsubmit="handleStartQuiz(event)" class="space-y-4 relative z-10">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Nama Lengkap *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="participantName" required placeholder="Contoh: Budi Pratama, S.T."
+                                class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-100 placeholder-slate-500 text-sm transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Email *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </span>
+                                <input type="email" id="participantEmail" required placeholder="budi@contoh.com"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-100 placeholder-slate-500 text-sm transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Instansi / Divisi *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-building"></i>
+                                </span>
+                                <input type="text" id="participantDept" required placeholder="Contoh: IT / Universitas A"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-100 placeholder-slate-500 text-sm transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-4 mt-4 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-600 hover:via-purple-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-purple-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-base">
+                        <span>Mulai Kuesioner Sekarang</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 2: QUESTIONNAIRE FORM -->
+        <section id="viewQuiz" class="hidden max-w-4xl mx-auto w-full space-y-6">
+            
+            <!-- Progress Top Bar -->
+            <div class="glass-panel rounded-2xl p-4 sticky top-20 z-30 shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center gap-2">
+                        <span id="currentDimBadge" class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px]">Dimensi 1</span>
+                        <span>Kemajuan Jawaban</span>
+                    </span>
+                    <span class="text-xs font-bold text-slate-300">
+                        <span id="answeredCount" class="text-pink-400 font-extrabold text-sm">0</span> / 20 Soal
+                    </span>
+                </div>
+                <!-- Progress bar container -->
+                <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-700">
+                    <div id="progressBar" class="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 h-full rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Quick Jump Grid -->
+            <div class="glass-panel rounded-2xl p-4">
+                <p class="text-xs font-medium text-slate-400 mb-2">Navigasi Cepat Nomor Soal:</p>
+                <div id="quickNavGrid" class="grid grid-cols-10 sm:grid-cols-20 gap-1.5">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Questions Container -->
+            <form id="quizForm" onsubmit="handleManualSubmit(event)" class="space-y-6">
+                <div id="questionsContainer" class="space-y-6">
+                    <!-- Dynamic rendering of 20 questions -->
+                </div>
+
+                <!-- Submit Action Footer -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-indigo-500/30">
+                    <div class="text-center sm:text-left">
+                        <h4 class="font-bold text-slate-200">Sudah Selesai Mengisi Semua?</h4>
+                        <p class="text-xs text-slate-400">Pastikan seluruh 20 pertanyaan telah dijawab sebelum mengirimkan respon.</p>
+                    </div>
+                    <button type="submit" 
+                        class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Kirim & Lihat Hasil Rekap</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- VIEW 3: RESULTS & RADAR CHART -->
+        <section id="viewResult" class="hidden max-w-4xl mx-auto w-full space-y-6">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-purple-500/30">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+                            <i class="fa-solid fa-check-circle"></i> Assessment Selesai
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Hasil Profil Pola Pikir Anda</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Atas nama: <span id="resParticipantName" class="text-indigo-300 font-bold"></span> (<span id="resParticipantDept"></span>)</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="switchTab('spreadsheet')" class="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-semibold transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-table"></i>
+                            <span>Buka Spreadsheet</span>
+                        </button>
+                        <button onclick="resetAndRetake()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Ulangi</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dominant Trait Highlight Banner -->
+                <div class="mt-6 p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-slate-900 border border-purple-500/30 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 to-indigo-500 flex items-center justify-center text-white text-2xl shadow-lg shrink-0">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-purple-300 font-bold">Kecenderungan Utama Anda:</p>
+                        <h3 id="dominantMindsetTitle" class="text-xl font-bold text-amber-300">Dominan Growth Mindset</h3>
+                        <p id="dominantMindsetDesc" class="text-xs text-slate-300 mt-0.5 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Chart & Dimension Breakdown Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 items-center">
+                    <!-- Radar Chart Container -->
+                    <div class="bg-slate-900/80 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-inner flex flex-col items-center">
+                        <h4 class="text-sm font-bold text-slate-300 mb-4 text-center">Visualisasi Peta Pola Pikir (5 Dimensi)</h4>
+                        <div class="w-full max-w-[340px] aspect-square relative">
+                            <canvas id="mindsetRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Scores List Breakdown -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold text-slate-300">Rincian Skor Per Dimensi (Maks. 20)</h4>
+                        <div id="dimensionScoresList" class="space-y-3">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Recommendations -->
+                <div class="mt-8 pt-6 border-t border-slate-800">
+                    <h4 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i> Rekomendasi Pengembangan Diri
+                    </h4>
+                    <div id="recommendationBox" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs leading-relaxed">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: REKAP SPREADSHEET SYSTEM -->
+        <section id="viewSpreadsheet" class="hidden max-w-6xl mx-auto w-full space-y-6">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-500/20">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+                            <i class="fa-solid fa-table-cells"></i> Database & Rekap Jawaban
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Spreadsheet Rekap Pola Pikir</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Seluruh data jawaban kuesioner disimpan secara real-time di tabel rekap ini.</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+                            <i class="fa-solid fa-file-csv"></i>
+                            <span>Unduh CSV / Excel</span>
+                        </button>
+                        <button onclick="generateDummyData()" class="px-3 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Simulasi Data</span>
+                        </button>
+                        <button onclick="clearAllData()" class="px-3 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Bersihkan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Google Sheets Webhook Integration Box -->
+                <div class="mt-6 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="toggleWebhookHelp()">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i>
+                            <span class="text-xs font-bold text-slate-200">Sinkronisasi Langsung ke Google Sheets (Opsional)</span>
+                        </div>
+                        <span id="webhookToggleIcon" class="text-xs text-slate-400"><i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+
+                    <div id="webhookBoxContent" class="hidden space-y-3 pt-2 text-xs border-t border-slate-800">
+                        <p class="text-slate-400">Masukkan Webhook URL Google Apps Script Anda untuk mengirim setiap respon otomatis ke Google Spreadsheet Anda di Cloud:</p>
+                        <div class="flex gap-2">
+                            <input type="url" id="webhookUrlInput" placeholder="https://script.google.com/macros/s/.../exec" 
+                                class="flex-grow bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 placeholder-slate-600 text-xs focus:ring-1 focus:ring-cyan-500">
+                            <button onclick="saveWebhookUrl()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs transition-all">Simpan URL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Spreadsheet Table Grid -->
+                <div class="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 overflow-hidden shadow-inner">
+                    <div class="overflow-x-auto max-h-[480px]">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="sticky top-0 bg-slate-900 text-slate-300 font-semibold border-b border-slate-800 z-10 shadow-md">
+                                <tr class="divide-x divide-slate-800">
+                                    <th class="p-3 w-12 text-center">No</th>
+                                    <th class="p-3 min-w-[140px]">Waktu</th>
+                                    <th class="p-3 min-w-[160px]">Nama Peserta</th>
+                                    <th class="p-3 min-w-[160px]">Email</th>
+                                    <th class="p-3 min-w-[140px]">Instansi/Divisi</th>
+                                    <th class="p-3 text-center bg-pink-950/30 text-pink-300 min-w-[80px]">Growth</th>
+                                    <th class="p-3 text-center bg-cyan-950/30 text-cyan-300 min-w-[80px]">Adaptif</th>
+                                    <th class="p-3 text-center bg-amber-950/30 text-amber-300 min-w-[80px]">Analitis</th>
+                                    <th class="p-3 text-center bg-emerald-950/30 text-emerald-300 min-w-[80px]">Kreatif</th>
+                                    <th class="p-3 text-center bg-purple-950/30 text-purple-300 min-w-[80px]">Kolaborasi</th>
+                                    <th class="p-3 text-center bg-slate-800 font-bold min-w-[90px]">Total Skor</th>
+                                    <th class="p-3 min-w-[180px]">Profil Utama</th>
+                                </tr>
+                            </thead>
+                            <tbody id="spreadsheetTbody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                                <!-- Data rows rendered here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="emptySpreadsheetMsg" class="p-12 text-center text-slate-500 text-xs">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-600 block"></i>
+                        Belum ada respon kuesioner yang tersimpan. Mulai kuesioner atau klik "Simulasi Data".
+                    </div>
+                </div>
+
+                <div class="mt-4 flex justify-between items-center text-xs text-slate-400">
+                    <span>Total Respon Tersimpan: <strong id="totalRecordBadge" class="text-slate-200">0</strong></span>
+                    <button onclick="switchTab('welcome')" class="text-indigo-400 hover:text-indigo-300 underline font-medium">Kembali ke Beranda</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Notifications (Replacement for Alert) -->
+    <div id="modalOverlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-700 shadow-2xl text-center space-y-4 animate-bounce-short">
+            <div id="modalIcon" class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto text-xl border border-amber-500/30">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="modalTitle" class="text-lg font-bold text-white">Pemberitahuan</h3>
+            <p id="modalMessage" class="text-xs text-slate-300 leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all">
+                Saya Mengerti
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/50 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 Pemetaan Profil Pola Pikir • Assessment & Diagnostic Tool</p>
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           DATA DEFINITION: 20 QUESTIONS & 5 DIMENSIONS
+           ========================================================================== */
+        const DIMENSIONS = [
+            { id: 'growth', name: 'Pola Pikir Berkembang (Growth)', color: '#ec4899', bgClass: 'text-pink-400' },
+            { id: 'agile', name: 'Pola Pikir Adaptif (Agile)', color: '#06b6d4', bgClass: 'text-cyan-400' },
+            { id: 'analytical', name: 'Pola Pikir Analitis (Analytical)', color: '#f59e0b', bgClass: 'text-amber-400' },
+            { id: 'creative', name: 'Pola Pikir Kreatif (Creative)', color: '#10b981', bgClass: 'text-emerald-400' },
+            { id: 'collaborative', name: 'Pola Pikir Kolaboratif (Empathetic)', color: '#a855f7', bgClass: 'text-purple-400' }
+        ];
+
+        const QUESTIONS = [
+            // Dimensi 1: Growth Mindset
+            { id: 1, dim: 'growth', text: "Saya percaya bahwa kecerdasan dan kemampuan dapat terus ditingkatkan melalui latihan dan usaha keras." },
+            { id: 2, dim: 'growth', text: "Bagi saya, kegagalan adalah kesempatan belajar yang berharga, bukan bukti ketidakmampuan saya." },
+            { id: 3, dim: 'growth', text: "Saya menyukai tugas-tugas baru yang menantang dan memaksa saya keluar dari zona nyaman." },
+            { id: 4, dim: 'growth', text: "Kritik konstruktif dari orang lain sangat saya harapkan untuk pengembangan pribadi saya." },
+
+            // Dimensi 2: Agile Mindset
+            { id: 5, dim: 'agile', text: "Saya dapat dengan cepat menyesuaikan rencana ketika terjadi perubahan situasi mendadak." },
+            { id: 6, dim: 'agile', text: "Saya tetap tenang dan produktif meskipun bekerja dalam situasi yang serba belum pasti (ambigu)." },
+            { id: 7, dim: 'agile', text: "Saya selalu aktif mencari cara kerja baru yang lebih efisien daripada terpaku pada rutinitas lama." },
+            { id: 8, dim: 'agile', text: "Saya mampu beralih dari satu prioritas ke prioritas lain tanpa kehilangan fokus utama." },
+
+            // Dimensi 3: Analytical Mindset
+            { id: 9, dim: 'analytical', text: "Sebelum mengambil keputusan penting, saya selalu mengumpulkan data dan fakta pendukung." },
+            { id: 10, dim: 'analytical', text: "Saya terbiasa mengurai masalah kompleks menjadi bagian-bagian kecil agar lebih mudah diselesaikan." },
+            { id: 11, dim: 'analytical', text: "Saya selalu menguji asumsi awal sebelum menerima suatu informasi sebagai kebenaran." },
+            { id: 12, dim: 'analytical', text: "Saya memperhitungkan dampak jangka panjang serta risiko dari setiap langkah yang diambil." },
+
+            // Dimensi 4: Creative Mindset
+            { id: 13, dim: 'creative', text: "Saya sering mencetuskan gagasan unik yang belum pernah dipikirkan oleh rekan tim sebelumnya." },
+            { id: 14, dim: 'creative', text: "Ketika menemui jalan buntu, saya dapat menemukan jalan keluar alternatif dengan mudah." },
+            { id: 15, dim: 'creative', text: "Saya senang menghubungkan dua konsep dari bidang berbeda untuk menciptakan ide baru." },
+            { id: 16, dim: 'creative', text: "Bagi saya, setiap permasalahan selalu memiliki lebih dari satu solusi yang efektif." },
+
+            // Dimensi 5: Collaborative Mindset
+            { id: 17, dim: 'collaborative', text: "Saya berusaha memahami sudut pandang dan perasaan orang lain sebelum memberikan pendapat." },
+            { id: 18, dim: 'collaborative', text: "Hasil pencapaian bersama tim jauh lebih berharga bagi saya daripada pencapaian pribadi." },
+            { id: 19, dim: 'collaborative', text: "Saya mendengarkan rekan bicara dengan penuh perhatian tanpa memotong pembicaraan mereka." },
+            { id: 20, dim: 'collaborative', text: "Saya siap menyesuaikan pendapat pribadi demi tercapainya kesepakatan terbaik bagi tim." }
+        ];
+
+        const LIKERT_OPTIONS = [
+            { val: 1, label: "Sangat Tidak Setuju", short: "STS", color: "bg-rose-500/10 text-rose-400 border-rose-500/30 hover:bg-rose-500/20" },
+            { val: 2, label: "Tidak Setuju", short: "TS", color: "bg-orange-500/10 text-orange-400 border-orange-500/30 hover:bg-orange-500/20" },
+            { val: 3, label: "Ragu-ragu / Netral", short: "N", color: "bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20" },
+            { val: 4, label: "Setuju", short: "S", color: "bg-teal-500/10 text-teal-400 border-teal-500/30 hover:bg-teal-500/20" },
+            { val: 5, label: "Sangat Setuju", short: "SS", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20" }
+        ];
+
+        /* ==========================================================================
+           GLOBAL STATE MANAGEMENT
+           ========================================================================== */
+        let currentParticipant = null;
+        let userAnswers = {}; // { q1: 5, q2: 4, ... }
+        let timerInterval = null;
+        let timeRemainingSeconds = 20 * 60; // 20 minutes = 1200s
+        let radarChartInstance = null;
+
+        // Load responses from LocalStorage
+        let surveyDatabase = JSON.parse(localStorage.getItem('mindset_survey_db') || '[]');
+
+        /* ==========================================================================
+           INITIALIZATION & NAVIGATION
+           ========================================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderQuestionnaireForm();
+            renderSpreadsheetTable();
+        });
+
+        function switchTab(tabName) {
+            const views = ['Welcome', 'Quiz', 'Result', 'Spreadsheet'];
+            views.forEach(v => {
+                const el = document.getElementById(`view${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const timerContainer = document.getElementById('timerContainer');
+            if (tabName === 'quiz') {
+                timerContainer.classList.remove('hidden');
+                timerContainer.classList.add('flex');
+            } else {
+                timerContainer.classList.add('hidden');
+                timerContainer.classList.remove('flex');
+            }
+
+            if (tabName === 'welcome') document.getElementById('viewWelcome').classList.remove('hidden');
+            if (tabName === 'quiz') document.getElementById('viewQuiz').classList.remove('hidden');
+            if (tabName === 'result') document.getElementById('viewResult').classList.remove('hidden');
+            if (tabName === 'spreadsheet') {
+                document.getElementById('viewSpreadsheet').classList.remove('hidden');
+                renderSpreadsheetTable();
+            }
+        }
+
+        /* ==========================================================================
+           TIMER CONTROLLER
+           ========================================================================== */
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeRemainingSeconds = 20 * 60; // 20 Minutes
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeRemainingSeconds--;
+                updateTimerDisplay();
+
+                if (timeRemainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    showModal("Waktu Habis!", "Batas waktu 20 menit telah berakhir. Respon Anda akan otomatis dikirimkan.");
+                    autoSubmitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const min = Math.floor(timeRemainingSeconds / 60);
+            const sec = timeRemainingSeconds % 60;
+            const formatted = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            
+            const timerEl = document.getElementById('timerDisplay');
+            if (timerEl) {
+                timerEl.innerText = formatted;
+                if (timeRemainingSeconds <= 180) { // < 3 Mins remaining
+                    timerEl.className = "font-mono font-bold text-lg text-rose-500 animate-pulse-fast";
+                } else if (timeRemainingSeconds <= 600) { // < 10 Mins
+                    timerEl.className = "font-mono font-bold text-lg text-amber-400";
+                } else {
+                    timerEl.className = "font-mono font-bold text-lg text-amber-300";
+                }
+            }
+        }
+
+        /* ==========================================================================
+           QUIZ RENDERING & USER INTERACTION
+           ========================================================================== */
+        function handleStartQuiz(event) {
+            event.preventDefault();
+            const name = document.getElementById('participantName').value.trim();
+            const email = document.getElementById('participantEmail').value.trim();
+            const dept = document.getElementById('participantDept').value.trim();
+
+            if (!name || !email || !dept) {
+                showModal("Data Tidak Lengkap", "Harap isi nama, email, dan instansi Anda sebelum memulai.");
+                return;
+            }
+
+            currentParticipant = { name, email, dept, startTime: new Date().toISOString() };
+            userAnswers = {};
+
+            // Reset UI radios
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('.option-btn-label').forEach(lbl => {
+                lbl.classList.remove('ring-2', 'ring-indigo-400', 'bg-indigo-600/30');
+            });
+
+            updateProgress();
+            switchTab('quiz');
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestionnaireForm() {
+            const container = document.getElementById('questionsContainer');
+            const navGrid = document.getElementById('quickNavGrid');
+            if (!container) return;
+
+            container.innerHTML = '';
+            navGrid.innerHTML = '';
+
+            QUESTIONS.forEach((q, idx) => {
+                const dimInfo = DIMENSIONS.find(d => d.id === q.dim);
+                const qNum = idx + 1;
+
+                // Quick jump pill
+                const navBtn = document.createElement('button');
+                navBtn.type = 'button';
+                navBtn.id = `navPill-${qNum}`;
+                navBtn.className = "h-8 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-xs font-bold transition-all hover:border-slate-500";
+                navBtn.innerText = qNum;
+                navBtn.onclick = () => {
+                    const targetEl = document.getElementById(`questionCard-${qNum}`);
+                    if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                };
+                navGrid.appendChild(navBtn);
+
+                // Question Card
+                const card = document.createElement('div');
+                card.id = `questionCard-${qNum}`;
+                card.className = "glass-panel p-5 sm:p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-slate-700 transition-all";
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-indigo-400 font-extrabold text-xs flex items-center justify-center shrink-0">
+                                ${qNum}
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${dimInfo.bgClass} bg-slate-900/60 border-slate-700">
+                                ${dimInfo.name}
+                            </span>
+                        </div>
+                        <span id="statusCheck-${qNum}" class="text-slate-600 text-xs">
+                            <i class="fa-regular fa-circle"></i>
+                        </span>
+                    </div>
+
+                    <p class="text-slate-100 font-medium text-sm sm:text-base leading-relaxed">
+                        "${q.text}"
+                    </p>
+
+                    <!-- Likert Options -->
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-2">
+                        ${LIKERT_OPTIONS.map(opt => `
+                            <label id="lbl-q${qNum}-${opt.val}" 
+                                class="option-btn-label option-btn flex sm:flex-col items-center justify-between sm:justify-center p-3 rounded-xl border ${opt.color} cursor-pointer text-xs font-semibold text-center transition-all select-none">
+                                <input type="radio" name="q_${qNum}" value="${opt.val}" class="hidden" onchange="selectOption(${qNum}, ${opt.val}, '${q.dim}')">
+                                <span class="hidden sm:block text-[10px] opacity-75 uppercase mb-1">${opt.short}</span>
+                                <span>${opt.label}</span>
+                                <i class="fa-solid fa-check text-xs opacity-0 check-icon sm:mt-1"></i>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function selectOption(qNum, value, dim) {
+            userAnswers[`q_${qNum}`] = value;
+
+            // Highlight Option Buttons
+            LIKERT_OPTIONS.forEach(opt => {
+                const lbl = document.getElementById(`lbl-q${qNum}-${opt.val}`);
+                if (lbl) {
+                    const icon = lbl.querySelector('.check-icon');
+                    if (opt.val === value) {
+                        lbl.classList.add('ring-2', 'ring-indigo-400', 'bg-indigo-600/40');
+                        if (icon) icon.classList.remove('opacity-0');
+                    } else {
+                        lbl.classList.remove('ring-2', 'ring-indigo-400', 'bg-indigo-600/40');
+                        if (icon) icon.classList.add('opacity-0');
+                    }
+                }
+            });
+
+            // Update Status in Quick Jump Pill & Card Check
+            const navPill = document.getElementById(`navPill-${qNum}`);
+            const statusCheck = document.getElementById(`statusCheck-${qNum}`);
+
+            if (navPill) {
+                navPill.className = "h-8 rounded-lg bg-emerald-600 text-white border border-emerald-500 text-xs font-bold transition-all shadow-sm";
+            }
+            if (statusCheck) {
+                statusCheck.className = "text-emerald-400 text-xs";
+                statusCheck.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            }
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = QUESTIONS.length;
+            const answered = Object.keys(userAnswers).length;
+            const pct = Math.round((answered / total) * 100);
+
+            const countEl = document.getElementById('answeredCount');
+            const barEl = document.getElementById('progressBar');
+
+            if (countEl) countEl.innerText = answered;
+            if (barEl) barEl.style.width = `${pct}%`;
+        }
+
+        /* ==========================================================================
+           SUBMISSION & SCORE CALCULATION
+           ========================================================================== */
+        function handleManualSubmit(event) {
+            event.preventDefault();
+            const answeredCount = Object.keys(userAnswers).length;
+
+            if (answeredCount < QUESTIONS.length) {
+                showModal("Belum Lengkap", `Anda baru menjawab ${answeredCount} dari 20 pertanyaan. Harap selesaikan seluruh pertanyaan terlebih dahulu.`);
+                return;
+            }
+
+            processResultsAndSave();
+        }
+
+        function autoSubmitQuiz() {
+            processResultsAndSave();
+        }
+
+        function processResultsAndSave() {
+            clearInterval(timerInterval);
+
+            // Calculate dimension totals
+            const scores = {
+                growth: 0,
+                agile: 0,
+                analytical: 0,
+                creative: 0,
+                collaborative: 0
+            };
+
+            QUESTIONS.forEach((q, idx) => {
+                const val = userAnswers[`q_${idx + 1}`] || 3; // Default neutral if unanswered on auto-submit
+                scores[q.dim] += val;
+            });
+
+            const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
+
+            // Find Dominant Mindset
+            let dominantDim = 'growth';
+            let maxScore = -1;
+            Object.keys(scores).forEach(dim => {
+                if (scores[dim] > maxScore) {
+                    maxScore = scores[dim];
+                    dominantDim = dim;
+                }
+            });
+
+            const dominantObj = DIMENSIONS.find(d => d.id === dominantDim);
+
+            const record = {
+                id: 'RESP-' + Date.now().toString().slice(-6),
+                timestamp: new Date().toLocaleString('id-ID'),
+                name: currentParticipant ? currentParticipant.name : "Peserta",
+                email: currentParticipant ? currentParticipant.email : "-",
+                dept: currentParticipant ? currentParticipant.dept : "-",
+                scores: scores,
+                totalScore: totalScore,
+                dominant: dominantObj.name,
+                answers: { ...userAnswers }
+            };
+
+            // Save to database
+            surveyDatabase.unshift(record);
+            localStorage.setItem('mindset_survey_db', JSON.stringify(surveyDatabase));
+
+            // Sync Webhook if configured
+            sendToWebhookIfConfigured(record);
+
+            // Display Results
+            renderResultsView(record);
+            switchTab('result');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================================
+           RADAR CHART & RESULT DISPLAY
+           ========================================================================== */
+        function renderResultsView(record) {
+            document.getElementById('resParticipantName').innerText = record.name;
+            document.getElementById('resParticipantDept').innerText = record.dept;
+
+            // Dominant text
+            document.getElementById('dominantMindsetTitle').innerText = `Dominan ${record.dominant}`;
+            document.getElementById('dominantMindsetDesc').innerText = getMindsetSummaryDesc(record.dominant);
+
+            // Render Dimension Score Progress Bars
+            const listContainer = document.getElementById('dimensionScoresList');
+            listContainer.innerHTML = '';
+
+            DIMENSIONS.forEach(dim => {
+                const score = record.scores[dim.id] || 0;
+                const pct = Math.round((score / 20) * 100);
+
+                const item = document.createElement('div');
+                item.className = "space-y-1 bg-slate-900/50 p-3 rounded-xl border border-slate-800";
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-semibold text-slate-200">${dim.name}</span>
+                        <span class="font-bold font-mono ${dim.bgClass}">${score} / 20</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${dim.color};"></div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+
+            // Recommendations Box
+            const recoBox = document.getElementById('recommendationBox');
+            recoBox.innerHTML = getRecommendationsHTML(record.scores);
+
+            // Render Chart.js Radar
+            renderRadarChart(record.scores);
+        }
+
+        function renderRadarChart(scores) {
+            const ctx = document.getElementById('mindsetRadarChart').getContext('2d');
+            
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Growth', 'Adaptif', 'Analitis', 'Kreatif', 'Kolaboratif'],
+                    datasets: [{
+                        label: 'Skor Pola Pikir',
+                        data: [
+                            scores.growth,
+                            scores.agile,
+                            scores.analytical,
+                            scores.creative,
+                            scores.collaborative
+                        ],
+                        backgroundColor: 'rgba(99, 102, 241, 0.25)',
+                        borderColor: '#818cf8',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ec4899',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#ec4899',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 20,
+                            ticks: {
+                                stepSize: 5,
+                                color: '#94a3b8',
+                                backdropColor: 'transparent'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#f1f5f9',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function getMindsetSummaryDesc(dominantName) {
+            if (dominantName.includes('Growth')) {
+                return "Anda memiliki orientasi belajar yang sangat tinggi. Anda menganggap setiap rintangan sebagai sarana mengasah kemampuan dan selalu terbuka pada dorongan perbaikan.";
+            } else if (dominantName.includes('Adaptif')) {
+                return "Anda sangat lincah dan luwes dalam merespons ketidakpastian. Anda mudah beradaptasi dengan perubahan kondisi dan lingkungan yang cepat.";
+            } else if (dominantName.includes('Analitis')) {
+                return "Anda sangat sistematis dan berbasis bukti. Anda mengandalkan logika, data, dan analisa kritis sebelum mengambil keputusan strategis.";
+            } else if (dominantName.includes('Kreatif')) {
+                return "Anda penuh ide terobosan. Anda mampu menghubungkan konsep-konsep unik dan menemukan alternatif pemecahan masalah di luar kebiasaan.";
+            } else {
+                return "Anda mengedepankan empati dan kekuatan tim. Anda mahir mendengarkan, membangun kolaborasi harmonis, dan merangkul beragam gagasan.";
+            }
+        }
+
+        function getRecommendationsHTML(scores) {
+            let html = '';
+            
+            if (scores.growth < 12) {
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-pink-500/20 text-slate-300">
+                    <strong class="text-pink-400 block mb-1">Tingkatkan Growth Mindset:</strong>
+                    Cobalah melihat kegagalan kecil sebagai data refleksi, bukan penanda batas kemampuan diri Anda.
+                </div>`;
+            } else {
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-emerald-500/20 text-slate-300">
+                    <strong class="text-emerald-400 block mb-1">Pertahankan Growth Mindset:</strong>
+                    Bagikan dorongan belajar Anda kepada rekan sejawat melalui sesi berbagi atau mentoring.
+                </div>`;
+            }
+
+            if (scores.agile < 12) {
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-cyan-500/20 text-slate-300">
+                    <strong class="text-cyan-400 block mb-1">Pengembangan Agilitas:</strong>
+                    Latihlah diri Anda untuk membuat rencana cadangan (Plan B & C) agar tidak stres saat perubahan mendadak.
+                </div>`;
+            } else {
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-cyan-500/20 text-slate-300">
+                    <strong class="text-cyan-400 block mb-1">Kekuatan Adaptif:</strong>
+                    Anda dapat memimpin tim dalam situasi transisi atau manajemen perubahan organisasi.
+                </div>`;
+            }
+
+            return html;
+        }
+
+        /* ==========================================================================
+           SPREADSHEET REKAP MANAGEMENT
+           ========================================================================== */
+        function renderSpreadsheetTable() {
+            const tbody = document.getElementById('spreadsheetTbody');
+            const emptyMsg = document.getElementById('emptySpreadsheetMsg');
+            const totalBadge = document.getElementById('totalRecordBadge');
+
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            totalBadge.innerText = surveyDatabase.length;
+
+            if (surveyDatabase.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                return;
+            } else {
+                emptyMsg.classList.add('hidden');
+            }
+
+            surveyDatabase.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/90 transition-colors";
+
+                tr.innerHTML = `
+                    <td class="p-3 text-center text-slate-500 font-sans">${idx + 1}</td>
+                    <td class="p-3 text-slate-400 font-sans text-[11px]">${row.timestamp}</td>
+                    <td class="p-3 font-semibold text-slate-100 font-sans">${escapeHtml(row.name)}</td>
+                    <td class="p-3 text-slate-400 font-sans">${escapeHtml(row.email)}</td>
+                    <td class="p-3 text-slate-400 font-sans">${escapeHtml(row.dept)}</td>
+                    <td class="p-3 text-center text-pink-400 font-bold">${row.scores.growth}</td>
+                    <td class="p-3 text-center text-cyan-400 font-bold">${row.scores.agile}</td>
+                    <td class="p-3 text-center text-amber-400 font-bold">${row.scores.analytical}</td>
+                    <td class="p-3 text-center text-emerald-400 font-bold">${row.scores.creative}</td>
+                    <td class="p-3 text-center text-purple-400 font-bold">${row.scores.collaborative}</td>
+                    <td class="p-3 text-center font-extrabold text-white bg-slate-900">${row.totalScore}</td>
+                    <td class="p-3 font-sans text-indigo-300 font-medium text-[11px]">${escapeHtml(row.dominant)}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportToCSV() {
+            if (surveyDatabase.length === 0) {
+                showModal("Data Kosong", "Tidak ada data respon kuesioner yang dapat diekspor.");
+                return;
+            }
+
+            const headers = [
+                "ID Respon", "Waktu Selesai", "Nama Peserta", "Email", "Instansi/Divisi",
+                "Skor Growth", "Skor Adaptif", "Skor Analitis", "Skor Kreatif", "Skor Kolaborasi",
+                "Total Skor", "Profil Utama"
+            ];
+
+            // Add itemized questions q1-q20
+            for (let i = 1; i <= 20; i++) {
+                headers.push(`Jawaban Q${i}`);
+            }
+
+            const rows = [headers];
+
+            surveyDatabase.forEach(item => {
+                const row = [
+                    `"${item.id}"`,
+                    `"${item.timestamp}"`,
+                    `"${item.name.replace(/"/g, '""')}"`,
+                    `"${item.email.replace(/"/g, '""')}"`,
+                    `"${item.dept.replace(/"/g, '""')}"`,
+                    item.scores.growth,
+                    item.scores.agile,
+                    item.scores.analytical,
+                    item.scores.creative,
+                    item.scores.collaborative,
+                    item.totalScore,
+                    `"${item.dominant}"`
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    row.push(item.answers[`q_${i}`] || "-");
+                }
+
+                rows.push(row);
+            });
+
+            const csvContent = "\uFEFF" + rows.map(e => e.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Rekap_Pemetaan_Pola_Pikir_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function generateDummyData() {
+            const dummyNames = ["Siti Rahmawati", "Andi Wijaya", "Rina Kurnia", "Dewi Lestari", "Fajar Nugraha"];
+            const dummyDepts = ["HRD / SDM", "Pemasaran", "Keuangan", "R&D / Inovasi", "Operasional"];
+
+            for (let i = 0; i < 3; i++) {
+                const name = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+                const dept = dummyDepts[Math.floor(Math.random() * dummyDepts.length)];
+                const email = name.toLowerCase().replace(/\s+/g, '.') + "@contoh.com";
+
+                const scores = {
+                    growth: Math.floor(Math.random() * 8) + 12,
+                    agile: Math.floor(Math.random() * 8) + 12,
+                    analytical: Math.floor(Math.random() * 8) + 12,
+                    creative: Math.floor(Math.random() * 8) + 12,
+                    collaborative: Math.floor(Math.random() * 8) + 12
+                };
+
+                const total = Object.values(scores).reduce((a, b) => a + b, 0);
+
+                surveyDatabase.unshift({
+                    id: 'RESP-' + Math.floor(100000 + Math.random() * 900000),
+                    timestamp: new Date().toLocaleString('id-ID'),
+                    name, email, dept,
+                    scores,
+                    totalScore: total,
+                    dominant: DIMENSIONS[Math.floor(Math.random() * DIMENSIONS.length)].name,
+                    answers: {}
+                });
+            }
+
+            localStorage.setItem('mindset_survey_db', JSON.stringify(surveyDatabase));
+            renderSpreadsheetTable();
+            showModal("Simulasi Berhasil", "3 data kuesioner simulasi telah ditambahkan ke tabel rekap spreadsheet.");
+        }
+
+        function clearAllData() {
+            if (surveyDatabase.length === 0) return;
+            
+            surveyDatabase = [];
+            localStorage.removeItem('mindset_survey_db');
+            renderSpreadsheetTable();
+            showModal("Data Dibersihkan", "Seluruh data rekap kuesioner telah dihapus dari memori lokal.");
+        }
+
+        function resetAndRetake() {
+            currentParticipant = null;
+            userAnswers = {};
+            switchTab('welcome');
+        }
+
+        /* ==========================================================================
+           WEBHOOK SINKRONISASI GOOGLE SHEETS
+           ========================================================================== */
+        function toggleWebhookHelp() {
+            const content = document.getElementById('webhookBoxContent');
+            const icon = document.getElementById('webhookToggleIcon');
+            content.classList.toggle('hidden');
+            if (content.classList.contains('hidden')) {
+                icon.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+            }
+        }
+
+        function saveWebhookUrl() {
+            const url = document.getElementById('webhookUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem('mindset_webhook_url', url);
+                showModal("URL Tersimpan", "Google Sheets Webhook URL berhasil disimpan di browser Anda.");
+            }
+        }
+
+        function sendToWebhookIfConfigured(record) {
+            const url = localStorage.getItem('mindset_webhook_url') || document.getElementById('webhookUrlInput')?.value;
+            if (!url) return;
+
+            try {
+                fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(record)
+                }).catch(err => console.log('Webhook Push Error:', err));
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ==========================================================================
+           UTILITY FUNCTIONS
+           ========================================================================== */
+        function showModal(title, msg) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
